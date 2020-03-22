@@ -34,9 +34,14 @@ rOs_Oc = md/ms*rcd_d;
 I_S_Oc = zeros(3,3);
 
 % For the elements along the diagonal, I_S_Oc = I_S_Os + m_s * d^2
+% calculate m_sDSquared, the product between the mass of the spaceship and
+% the distance between the combined center of mass and the spaceship center of mass squared
+
+
+% calculate diagonal elements
 I_S_Oc(1) = Is(1) + ms*(rOs_Oc(2)^2 + rOs_Oc(3)^2);
-I_S_Oc(5) = Is(5) + ms*(rOs_Oc(1)^2 + rOs_Oc(3)^2);
-I_S_Oc(9) = Is(9) + ms*(rOs_Oc(1)^2 + rOs_Oc(2)^2);
+I_S_Oc(5) = Is(5) + ms*(rOs_Oc(2)^2 + rOs_Oc(3)^2);
+I_S_Oc(9) = Is(9) + ms*(rOs_Oc(2)^2 + rOs_Oc(3)^2);
 
 % For off diagonal elements, I_S_Oc = I_S_Os - m_s * d_u * d_v
 I_S_Oc(2) = Is(2) - ms*rOs_Oc(1)*rOs_Oc(2);
@@ -51,10 +56,10 @@ I_S_Oc(8) = I_S_Oc(6);
 I_D_Oc = zeros(3,3);
 m_dDSquared = md * sum(rOd_Oc.^2);
 
-% Calculate diagonal elements
-I_D_Oc(1) = Id(1) + md*(rOd_Oc(2)^2 + rOd_Oc(3)^2);
-I_D_Oc(5) = Id(5) + md*(rOd_Oc(1)^2 + rOd_Oc(3)^2);
-I_D_Oc(9) = Id(9) + md*(rOd_Oc(1)^2 + rOd_Oc(2)^2);
+% calculate diagonal elements
+I_D_Oc(1) = Id(1) + m_dDSquared;
+I_D_Oc(5) = Id(5) + m_dDSquared;
+I_D_Oc(9) = Id(9) + m_dDSquared;
 
 % For off diagonal elements, I_D_Oc = I_D_Os - m_d * d_u * d_v
 I_D_Oc(2) = Id(2) - md*rOd_Oc(1)*rOd_Oc(2);
