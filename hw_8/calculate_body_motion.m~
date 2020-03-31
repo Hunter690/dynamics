@@ -57,6 +57,7 @@ end
 % Take the force that was calculated and divide by the mass of particle I to
 % get the 3x1 acceleration vector of particle I
 % Take the velocity of particle I from x, append the acceleration vector,
-% and put the velocity-acceleraiton vector in x_dot
+
+
 
 end
