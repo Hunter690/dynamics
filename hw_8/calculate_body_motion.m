@@ -11,8 +11,10 @@ function x_dot = calculate_body_motion(t,x,m,G)
 
 x_dot = zeros(size(x));
 
-% x is a vector that contains the position and velocity of N particles in
-% the N reference frame.
+% x is a vector that contains the positions and velocitys of N particles in
+% the N reference frame. All the positions are listed first and then all
+% the velocities follow: [r1_x, r1_y, r1_z... r2_x, r2_y, r2_z, v1_x, v1_y,
+% v1_z... vn_x, vn_y, vn_z]
 % Want to use force of gravity equation to solve for the acceleration of
 % the N particles.
 % The acceleration of the N particles are strictly caused by the
@@ -22,25 +24,23 @@ x_dot = zeros(size(x));
 % *position_vector_from_other_particle_to_current_particle
 numberOfParticles = length(m);
 
-% Create a force matrix, need 3x the rows because each particle force has
-% three components
-forceMatrix = zeros(3, numberOfParticles);
-
 % For each particle, need to calculate the forces from the other particles
 % Once the force on particle A by B is calculated, don't want to
 % recalculate the force on particle B by A. We know the magnitude is the
 % same, just the direction is the opposite, so we can form an NxN matrix
 % where the the i,j entry is the force on particle i by j.
 for particleI = 1:numberOfParticles
+    % Create a force matrix, need 3x the rows because each particle force has
+    % three components
+    forceMatrix = zeros(3, numberOfParticles);
+
     % Get the mass of particle I for later force calculation
-    particleIMass = m(particleI);
+    IMass = m(particleI);
     
-    % Get the position of particle I; multiply by 6 because each particle
-    % has 6 indices in x to describe all components in position and
-    % velocity
-    particleIStartingIndex = (particleI - 1) * 6 + 1;
-    v_and_r_I_On = x(particleIStartingIndex:particleIStartingIndex + 5);
-    r_I_On = v_and_r_I_On(1:3);
+    % Get the position of particle I; multiply by 3 because each particle
+    % has 3 indices in x to describe all components in position
+    IPositionStartingIndex = (particleI - 1) * 3 + 1;
+    r_I_On = x(IPositionStartingIndex:IPositionStartingIndex + 2);
     
     for particleJ = 1:numberOfParticles
         if particleI == particleJ
@@ -49,8 +49,8 @@ for particleI = 1:numberOfParticles
         end
 
         % Get the position of particle J
-        particleJStartingIndex = (particleJ - 1) * 6 + 1;
-        r_J_On = x(particleJStartingIndex:particleJStartingIndex + 2);
+        JPositionStartingIndex = (particleJ - 1) * 3 + 1;
+        r_J_On = x(JPositionStartingIndex:JPositionStartingIndex + 2);
         
         % Calculate the position vector from J to I
         % r_I_J = r_I_On + r_On_J
@@ -60,7 +60,7 @@ for particleI = 1:numberOfParticles
         particleSeparation = sqrt(sum(r_I_J.^2));
         
         % Calculate the force of from J on I
-        F_I_J = -G*particleIMass*m(particleJ)/particleSeparation^3*r_I_J;
+        F_I_J = -G*IMass*m(particleJ)/particleSeparation^3*r_I_J;
         
         % Put the force in the force matrix using 3 rows, and the j'th
         % column index 
@@ -74,13 +74,19 @@ for particleI = 1:numberOfParticles
     
     % Take the force that was calculated and divide by the mass of particle I to
     % get the 3x1 acceleration vector of particle I
-    particleIAcceleration = netForceOnI/particleIMass;
+    N_a_I = netForceOnI/IMass;
     
-    % Take the velocity of particle I from x, append the acceleration vector,
-    % and put the velocity-acceleration vector in x_dot
-    v_I_On = v_and_r_I_On(4:end);
+    % Get the velocity of particle I from x; the velocity of particles are
+    % in the second half of x after index = numberOfParticles*3. Then need
+    % to add IPositionStartingIndex to get the velocity index
+    IVelocityStartingIndex = numberOfParticles*3 + IPositionStartingIndex;
+    N_v_I = x(IVelocityStartingIndex:IVelocityStartingIndex + 2);
 
-    x_dot(particleIStartingIndex:particleIStartingIndex + 5) = [v_I_On, particleIAcceleration'];
+    % Place the velocity and acceleration vectors in x_dot
+    % The velocity should be placed where the old position was placed and
+    % acceleration should be where the old velocity was
+    x_dot(IPositionStartingIndex:IPositionStartingIndex + 2) = N_v_I;
+    x_dot(IVelocityStartingIndex:IVelocityStartingIndex + 2) = N_a_I';
 end
 
 end
