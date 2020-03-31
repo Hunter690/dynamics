@@ -22,7 +22,10 @@ x_dot = zeros(size(x));
 % *position_vector_from_other_particle_to_current_particle
 numberOfParticles = length(m);
 
-forceMatrix = zeros(numberOfParticles);
+% Create a force matrix, need 3x the rows because each particle force has
+% three components
+forceMatrix = zeros(3, numberOfParticles);
+
 % For each particle, need to calculate the forces from the other particles
 % Once the force on particle A by B is calculated, don't want to
 % recalculate the force on particle B by A. We know the magnitude is the
@@ -30,34 +33,54 @@ forceMatrix = zeros(numberOfParticles);
 % where the the i,j entry is the force on particle i by j.
 for particleI = 1:numberOfParticles
     % Get the mass of particle I for later force calculation
-    particleIMass = mass(particleI);
+    particleIMass = m(particleI);
     
-    % Get the position and velocity of particle I
+    % Get the position of particle I; multiply by 6 because each particle
+    % has 6 indices in x to describe all components in position and
+    % velocity
+    particleIStartingIndex = (particleI - 1) * 6 + 1;
+    v_and_r_I_On = x(particleIStartingIndex:particleIStartingIndex + 5);
+    r_I_On = v_and_r_I_On(1:3);
     
-    for particleJ = (particleI+1):numberOfParticles
-        % Get the position and velocity of particle J
+    for particleJ = 1:numberOfParticles
+        if particleI == particleJ
+            % the gravitational force of a particle on itself is always 0
+            continue
+        end
+
+        % Get the position of particle J
+        particleJStartingIndex = (particleJ * 6 + 1;
+        r_J_On = x(particleJStartingIndex:particleJStartingIndex + 2);
         
         % Calculate the position vector from J to I
+        % r_I_J = r_I_On + r_On_J
+        r_I_J = r_I_On - r_J_On;
         
-        % Calculate the magnitude of the position vector
+        % Calculate the distance between I and J
+        particleSeparation = sqrt(sum(r_I_J.^2));
         
         % Calculate the force of from J on I
+        F_I_J = -G*particleIMass*m(particleJ)/particleSeparation^3*r_I_J;
         
-        % Put the force in the force matrix in the i,j index (expecting 3x1
-        % matrix in each index)
+        % Put the force in the force matrix using 3 rows, and the j'th
+        % column index 
+        forceMatrix(:, particleJ) = F_I_J;
     end
+    
+    % Calculate the sum of row i to find the net force on particle I (note
+    % that the net force should return a 3x1 vector)
+    netForceOnI = [sum(forceMatrix(1, :)), sum(forceMatrix(2, :)), ...
+        sum(forceMatrix(3, :))];
+    
+    % Take the force that was calculated and divide by the mass of particle I to
+    % get the 3x1 acceleration vector of particle I
+    particleIAcceleration = netForceOnI/particleIMass;
+    
+    % Take the velocity of particle I from x, append the acceleration vector,
+    % and put the velocity-acceleration vector in x_dot
+    v_I_On = v_and_r_I_On(4:end);
+
+    x_dot(particleIStartingIndex:particleIStartingIndex + 5) = [v_I_On, particleIAcceleration'];
 end
-
-% The jth column = - ith row because the force of gravity has the same
-% magnitude but opposite direction
-% For loop through the number of particles
-% Set column j = -row i
-% Calculate the sum of row i to find the net force on particle I (note that
-% each index is a vector and the net force should return a 3x1 vector)
-% Take the force that was calculated and divide by the mass of particle I to
-% get the 3x1 acceleration vector of particle I
-% Take the velocity of particle I from x, append the acceleration vector,
-
-
 
 end
