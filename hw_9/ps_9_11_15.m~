@@ -61,12 +61,12 @@ legend("H_b_z")
 K = 1/2*m*(1/2*r^2*w_c.^2+(1/4*r^2+L^2)*dphi.^2+(1/2*r^2+...
     (L^2-1/4*r^2)*(sin(phi)).^2).*dtheta.^2-r^2*w_c.*cos(phi).*dtheta);
 U = m*g*L*cos(phi);
-mechanicalEnergy = K + U;
+mechanicalEner
 figure(4);
-plot(time, mechanicalEnergy);
-title("Mechanical Energy vs. Time (s)")
+plot(time, K);
+title("Kinetic energy vs. Time (s)")
 xlabel("Time (s)")
-ylabel("Mechanical Energy (J)")
+ylabel("K (J)")
 
 % Differential Function
 function dydt = gyroODE(t, y, g, m, r, L)
