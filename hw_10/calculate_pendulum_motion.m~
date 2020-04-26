@@ -15,7 +15,7 @@ x_dot = zeros(2*numberOfParticles,1);
     
 % Need to create a systems of equations formatted as Az = b
 % where z is a 2Nx1 vector that will hold the theta double dots 
-% and the tensions [ddtheta_1, ddtheta_2... ddtheta_N, T_1, T_2... T_N]
+% and the tensions [ddtheta1, ddtheta2... ddthetaN, T1, T2... TN]
 
 % For each mass, need to calculate it's acceleration knowing that
 % N_a_A_n = N_a_A_previous_n + N_dw_a_n x rAn_Ao + N_w_an x (N_w_an x
