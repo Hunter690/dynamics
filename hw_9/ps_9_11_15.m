@@ -55,7 +55,6 @@ plot(time, H_bz);
 title("Angular Momentum vs. Time (s)")
 xlabel("Time (s)")
 ylabel("H (rad/s)")
-legend("H_b_z")
 
 % Plot K as well using equation from 11.4 b
 K = 1/2*m*(1/2*r^2*w_c.^2+(1/4*r^2+L^2)*dphi.^2+(1/2*r^2+...
