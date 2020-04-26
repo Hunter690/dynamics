@@ -27,27 +27,29 @@ x_dot = zeros(2*numberOfParticles,1);
 % Note that n is always an integer and A_n represents the nth particle with
 % mass m[n]
 
+% Because of the way that angles are given, deciding to do all calculations
+% in the newtonian reference frame
+
 % For each particle from 1 to n-1, there are three forces:
 %   1. gravity which is always m[n]*g in the n_x direction
-%       a. Note that gravity will need to be put in the a^n basis
 %   2. T_left will always act in the -an_x direction
+%       a. Note that this will need to be put in the N basis
 %   3. T_right will always act in the a(n+1)_x direction
-%       a. Note that this will also need to be put in the a^n basis
+%       a. Note that this will need to be put in the N basis
 
 % x_dot = [dtheta_1, dtheta_2... dtheta_n, ddtheta_1, ddtheta_2...
 % ddtheta_n]'
 
-% for loop through each particle
+% for loop through every particle except for the last one
 
-% Calculate the velocity of the particle using the previous particle's
-% velocity + N_dw_a_n x rAn_Ao
-% Note that the previous particle's velocity will be in the a(n-1) basis, so
-% need to change basis
+% Calculate the position of the particle using the previous particle's
+% position + l[n]*an_x = rA(n-1)/Ao + l[n]*N_R_an*an_x
 
 % Calculate the acceleration of the particle using the previous particle's
 % acceleration + N_dw_a_n x rAn_Ao + N_w_an x (N_w_an x rAn_Ao)
-% Note that the previous particle's acceleration will be in the a(n-1)
-% basis, so need to change basis
+% Note that for the previous particle's acceleration, replace it with the
+% net force of the previous particle divided by the previous particle's
+% mass
 
 
 end
