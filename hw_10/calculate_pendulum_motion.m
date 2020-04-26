@@ -36,4 +36,18 @@ x_dot = zeros(2*numberOfParticles,1);
 
 % x_dot = [dtheta_1, dtheta_2... dtheta_n, ddtheta_1, ddtheta_2...
 % ddtheta_n]'
+
+% for loop through each particle
+
+% Calculate the velocity of the particle using the previous particle's
+% velocity + N_dw_a_n x rAn_A(n-1)
+% Note that the previous particle's velocity will be in the a(n-1) basis, so
+% need to change basis
+
+% Calculate the acceleration of the particle using the previous particle's
+% acceleration + N_dw_a_n x rAn_Ao + N_w_an x (N_w_an x rAn_Ao)
+% Note that the previous particle's acceleration will be in the a(n-1)
+% basis, so need to change basis
+
+
 end
